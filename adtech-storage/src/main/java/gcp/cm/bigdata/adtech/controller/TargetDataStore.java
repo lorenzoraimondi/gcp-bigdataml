@@ -2,7 +2,8 @@ package gcp.cm.bigdata.adtech.controller;
 
 public enum TargetDataStore {
     CLOUD_DATASTORE("datastore"),
-    CLOUD_BIGTABLE("bigtable");
+    CLOUD_BIGTABLE("bigtable"),
+    CLOUD_PUBSUB("pubsub");
 
     private String pathPrefix;
 

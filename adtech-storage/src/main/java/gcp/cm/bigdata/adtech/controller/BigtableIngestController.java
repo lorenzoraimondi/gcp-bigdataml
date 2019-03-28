@@ -1,5 +1,6 @@
 package gcp.cm.bigdata.adtech.controller;
 
+import gcp.cm.bigdata.adtech.BigtableHelper;
 import gcp.cm.bigdata.adtech.domain.Impression;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
@@ -18,16 +19,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 @CrossOrigin
 public class BigtableIngestController {
 
-    private static Connection connection;
-
-    static {
-        try {
-            connection = ConnectionFactory.createConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @RequestMapping(path = "impression", method = RequestMethod.POST)
     public void ingest(@RequestBody Impression entry) {
         byte[] CF1 = Bytes.toBytes("I");  // column family
@@ -37,7 +28,7 @@ public class BigtableIngestController {
         byte[] CF5 = Bytes.toBytes("C");  // column family
         Table table = null;
         try {
-            table = connection.getTable(TableName.valueOf("impressions"));
+            table = BigtableHelper.getConnection().getTable(TableName.valueOf("impressions"));
             Put p = new Put(Bytes.toBytes(String.format("%d#%d#%d#%d", entry.getSiteCategory(), entry.getAppCategory(), entry.getDeviceType(), entry.getHour())));
             p.addColumn(CF1, Bytes.toBytes("ID"), Bytes.toBytes(entry.getImpressionId()));
             p.addColumn(CF1, Bytes.toBytes("CLICK"), Bytes.toBytes(entry.getClicked()));

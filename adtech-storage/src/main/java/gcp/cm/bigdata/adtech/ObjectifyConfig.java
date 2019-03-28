@@ -39,6 +39,8 @@ public class ObjectifyConfig {
 
         @Override
         public void contextDestroyed(ServletContextEvent sce) {
+            BigtableHelper.closeConnection();
+            PubsubHelper.shutdownPublisher();
         }
     }
 
