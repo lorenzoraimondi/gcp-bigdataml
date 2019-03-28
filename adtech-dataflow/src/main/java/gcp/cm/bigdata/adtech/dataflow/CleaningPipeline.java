@@ -7,6 +7,7 @@ import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class CleaningPipeline {
 //                        TextIO.read().from("/Users/federico/Downloads/avazu-ctr-prediction/test"))
                 .apply("SplitLines", MapElements
                         .into(TypeDescriptors.lists(TypeDescriptors.strings()))
-                        .via((String line) -> Arrays.asList(line.split(",")))
+                        .via((String line) -> new ArrayList<>(Arrays.asList(line.split(","))))
                 )
                 .apply("CleanRecords", MapElements
                         .into(TypeDescriptors.lists(TypeDescriptors.strings()))
