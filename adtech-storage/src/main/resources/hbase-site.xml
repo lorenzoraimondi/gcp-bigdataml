@@ -1,0 +1,18 @@
+<configuration>
+    <property>
+        <name>hbase.client.connection.impl</name>
+        <value>com.google.cloud.bigtable.hbase1_x.BigtableConnection</value>
+    </property>
+    <property>
+        <name>google.bigtable.project.id</name>
+        <value>qwiklabs-gcp-56c3e61809c73e4d</value>
+    </property>
+    <property>
+        <name>google.bigtable.instance.id</name>
+        <value>instance-1</value>
+    </property>
+    <!--<property>-->
+        <!--<name>google.bigtable.app.profile.id</name>-->
+        <!--<value>[YOUR_APP_PROFILE_ID]</value>-->
+    <!--</property>-->
+</configuration>
