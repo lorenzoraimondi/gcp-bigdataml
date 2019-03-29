@@ -60,7 +60,7 @@ public class StreamingPipeline {
                 )
                 .apply(TextIO.write()
                         .withWindowedWrites()
-                        .withoutSharding()
+                        .withNumShards(1)
                         .withTempDirectory(FileSystems.matchNewResource(args[4], false))
                         .to(DefaultFilenamePolicy.fromStandardParameters(ValueProvider.StaticValueProvider.of(FileSystems.matchNewResource(args[4] + "site", false)), DefaultFilenamePolicy.DEFAULT_WINDOWED_SHARD_TEMPLATE, ".csv", true)))
         ;
@@ -78,7 +78,7 @@ public class StreamingPipeline {
                 )
                 .apply(TextIO.write()
                         .withWindowedWrites()
-                        .withoutSharding()
+                        .withNumShards(1)
                         .withTempDirectory(FileSystems.matchNewResource(args[4], false))
                         .to(DefaultFilenamePolicy.fromStandardParameters(ValueProvider.StaticValueProvider.of(FileSystems.matchNewResource(args[4] + "device", false)), DefaultFilenamePolicy.DEFAULT_WINDOWED_SHARD_TEMPLATE, ".csv", true)))
         ;
