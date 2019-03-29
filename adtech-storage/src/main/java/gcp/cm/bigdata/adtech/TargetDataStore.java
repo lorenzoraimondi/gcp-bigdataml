@@ -1,4 +1,4 @@
-package gcp.cm.bigdata.adtech.controller;
+package gcp.cm.bigdata.adtech;
 
 public enum TargetDataStore {
     CLOUD_DATASTORE("datastore"),

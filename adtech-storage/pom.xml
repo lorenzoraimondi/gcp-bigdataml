@@ -58,4 +58,51 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>src/main/resources/gcp.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>templating-maven-plugin</artifactId>-->
+                <!--<version>1.0.0</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>filter-src</id>-->
+                        <!--<goals>-->
+                            <!--<goal>filter-sources</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <!-- NB for Spring Boot projects the tag is @...@ and not ${...} -->
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
 </project>

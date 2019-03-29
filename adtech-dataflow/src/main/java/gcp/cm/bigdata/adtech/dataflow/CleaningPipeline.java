@@ -17,7 +17,7 @@ public class CleaningPipeline {
         Pipeline p = Pipeline.create(options);
         p
                 .apply("ReadFromGCS",
-                        TextIO.read().from("gs://abucket-for-codemotion/adtech/test"))
+                        TextIO.read().from(args[0]))
 //                        TextIO.read().from("/Users/federico/Downloads/avazu-ctr-prediction/test"))
                 .apply("SplitLines", MapElements
                         .into(TypeDescriptors.lists(TypeDescriptors.strings()))
@@ -36,7 +36,7 @@ public class CleaningPipeline {
                         .via((List<String> fields) -> String.join(",", fields))
                 )
                 .apply("WriteToGCS",
-                        TextIO.write().withoutSharding().to("gs://abucket-for-codemotion/adtech/test-df-out.csv")
+                        TextIO.write().withoutSharding().to(args[1])
 //                        TextIO.write().withoutSharding().to("/Users/federico/Downloads/avazu-ctr-prediction/test-df-out.csv")
                 )
         ;

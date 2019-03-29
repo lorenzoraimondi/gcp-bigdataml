@@ -4,4 +4,5 @@ mvn compile exec:java -e \
 -Dexec.args="qwiklabs-gcp-1b28c6712b534a2b \
 gs://bucket-for-codemotion/dataflow/staging/ \
 gs://bucket-for-codemotion/dataflow/temp/ \
-ad-impressions"
+ad-impressions \
+gs://bucket-for-codemotion/dataflow/"

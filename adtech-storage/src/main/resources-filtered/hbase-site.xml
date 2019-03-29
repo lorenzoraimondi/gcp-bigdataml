@@ -5,14 +5,14 @@
     </property>
     <property>
         <name>google.bigtable.project.id</name>
-        <value>qwiklabs-gcp-56c3e61809c73e4d</value>
+        <value>@gcp.project-id@</value>
     </property>
     <property>
         <name>google.bigtable.instance.id</name>
-        <value>instance-1</value>
+        <value>@gcp.bigtable-instance@</value>
     </property>
     <!--<property>-->
         <!--<name>google.bigtable.app.profile.id</name>-->
-        <!--<value>[YOUR_APP_PROFILE_ID]</value>-->
+        <!--<value>@gcp.bigtable-profile@</value>-->
     <!--</property>-->
 </configuration>

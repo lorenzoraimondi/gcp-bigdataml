@@ -16,24 +16,7 @@ public class PubsubIngestController {
 
     @RequestMapping(path = "impression", method = RequestMethod.POST)
     public void ingest(@RequestBody String entryJson) {
-
-        ByteString data = ByteString.copyFromUtf8(entryJson);
-        PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
-
-        ApiFuture<String> future = PubsubHelper.getPublisher().publish(pubsubMessage);
-
-        ApiFutures.addCallback(future, new ApiFutureCallback<String>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        System.out.println("Error publishing message : " + throwable.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(String messageId) {
-                        // Once published, returns server-assigned message ids (unique within the topic)
-                        System.out.println("Message published successfully : " + messageId);
-                    }
-                }, MoreExecutors.directExecutor());
+        PubsubHelper.submitNewImpression(entryJson);
     }
 
 }
