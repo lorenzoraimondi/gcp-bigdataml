@@ -1,8 +1,6 @@
 package gcp.cm.bigdata.adtech;
 
 import gcp.cm.bigdata.adtech.domain.Impression;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.util.InputMismatchException;
@@ -30,15 +28,15 @@ public class IngesterMain {
         entry.setHour(14103100);
         entry.setC1(1005);
         entry.setBannerPos(0);
-        entry.setSiteId(235);
-        entry.setSiteDomain(628);
-        entry.setSiteCategory(28772);
-        entry.setAppId(2386);
-        entry.setAppDomain(780189);
-        entry.setAppCategory(7722);
-        entry.setDeviceId(99214);
-        entry.setDeviceIp(6945779);
-        entry.setDeviceModel(711);
+        entry.setSiteId("235");
+        entry.setSiteDomain("628");
+        entry.setSiteCategory("28772");
+        entry.setAppId("2386");
+        entry.setAppDomain("780189");
+        entry.setAppCategory("7722");
+        entry.setDeviceId("99214");
+        entry.setDeviceIp("6945779");
+        entry.setDeviceModel("711");
         entry.setDeviceType(1);
         entry.setDeviceConnType(0);
         entry.setC14(1005);
@@ -78,15 +76,15 @@ public class IngesterMain {
         entry.setHour(scanner.nextInt());
         entry.setC1(scanner.nextInt());
         entry.setBannerPos(scanner.nextInt());
-        entry.setSiteId(nextIntOrRandom(scanner, 100));
-        entry.setSiteDomain(nextIntOrRandom(scanner, 100));
-        entry.setSiteCategory(nextIntOrRandom(scanner, 50));
-        entry.setAppId(nextIntOrRandom(scanner, 500));
-        entry.setAppDomain(nextIntOrRandom(scanner, 300));
-        entry.setAppCategory(nextIntOrRandom(scanner, 50));
-        entry.setDeviceId(nextIntOrRandom(scanner, 5000));
-        entry.setDeviceIp(nextIntOrRandom(scanner, 5000));
-        entry.setDeviceModel(nextIntOrRandom(scanner, 300));
+        entry.setSiteId(scanner.next());
+        entry.setSiteDomain(scanner.next());
+        entry.setSiteCategory(scanner.next());
+        entry.setAppId(scanner.next());
+        entry.setAppDomain(scanner.next());
+        entry.setAppCategory(scanner.next());
+        entry.setDeviceId(scanner.next());
+        entry.setDeviceIp(scanner.next());
+        entry.setDeviceModel(scanner.next());
         entry.setDeviceType(scanner.nextInt());
         entry.setDeviceConnType(scanner.nextInt());
         entry.setC14(scanner.nextInt());

@@ -12,15 +12,15 @@ public class Impression {
     private int clicked;
     @Index private int hour;
     private int bannerPos;
-    private int siteId;
-    private int siteDomain;
-    @Index private int siteCategory;
-    private int appId;
-    private int appDomain;
-    @Index private int appCategory;
-    private int deviceId;
-    private int deviceIp;
-    private int deviceModel;
+    private String siteId;
+    private String siteDomain;
+    @Index private String siteCategory;
+    private String appId;
+    private String appDomain;
+    @Index private String appCategory;
+    private String deviceId;
+    private String deviceIp;
+    private String deviceModel;
     @Index private int deviceType;
     private int deviceConnType;
     private int c1;
@@ -65,75 +65,75 @@ public class Impression {
         this.bannerPos = bannerPos;
     }
 
-    public int getSiteId() {
+    public String getSiteId() {
         return siteId;
     }
 
-    public void setSiteId(int siteId) {
+    public void setSiteId(String siteId) {
         this.siteId = siteId;
     }
 
-    public int getSiteDomain() {
+    public String getSiteDomain() {
         return siteDomain;
     }
 
-    public void setSiteDomain(int siteDomain) {
+    public void setSiteDomain(String siteDomain) {
         this.siteDomain = siteDomain;
     }
 
-    public int getSiteCategory() {
+    public String getSiteCategory() {
         return siteCategory;
     }
 
-    public void setSiteCategory(int siteCategory) {
+    public void setSiteCategory(String siteCategory) {
         this.siteCategory = siteCategory;
     }
 
-    public int getAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setAppId(int appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 
-    public int getAppDomain() {
+    public String getAppDomain() {
         return appDomain;
     }
 
-    public void setAppDomain(int appDomain) {
+    public void setAppDomain(String appDomain) {
         this.appDomain = appDomain;
     }
 
-    public int getAppCategory() {
+    public String getAppCategory() {
         return appCategory;
     }
 
-    public void setAppCategory(int appCategory) {
+    public void setAppCategory(String appCategory) {
         this.appCategory = appCategory;
     }
 
-    public int getDeviceId() {
+    public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(int deviceId) {
+    public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
 
-    public int getDeviceIp() {
+    public String getDeviceIp() {
         return deviceIp;
     }
 
-    public void setDeviceIp(int deviceIp) {
+    public void setDeviceIp(String deviceIp) {
         this.deviceIp = deviceIp;
     }
 
-    public int getDeviceModel() {
+    public String getDeviceModel() {
         return deviceModel;
     }
 
-    public void setDeviceModel(int deviceModel) {
+    public void setDeviceModel(String deviceModel) {
         this.deviceModel = deviceModel;
     }
 
