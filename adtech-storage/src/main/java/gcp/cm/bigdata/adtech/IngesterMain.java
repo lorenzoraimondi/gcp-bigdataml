@@ -57,7 +57,7 @@ public class IngesterMain {
     }
 
     public static void sendFromFileToDataStore(Ingester ingester) {
-        String line = null;
+        String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileToRead));
             reader.readLine(); // skip CSV headers
@@ -65,10 +65,6 @@ public class IngesterMain {
                 Impression entry = makeImpressionEntry(line);
                 ingester.sendEntry(entry);
             }
-        } catch (InputMismatchException e) {
-            System.out.println("Error in data file");
-            System.out.println("line:" + line);
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,30 +74,37 @@ public class IngesterMain {
         Scanner scanner = new Scanner(line);
         Impression entry = new Impression();
         scanner.useDelimiter(",");
-        entry.setImpressionId(scanner.next());
-        entry.setClicked(scanner.nextInt());
-        entry.setHour(scanner.nextInt());
-        entry.setC1(scanner.nextInt());
-        entry.setBannerPos(scanner.nextInt());
-        entry.setSiteId(scanner.next());
-        entry.setSiteDomain(scanner.next());
-        entry.setSiteCategory(scanner.next());
-        entry.setAppId(scanner.next());
-        entry.setAppDomain(scanner.next());
-        entry.setAppCategory(scanner.next());
-        entry.setDeviceId(scanner.next());
-        entry.setDeviceIp(scanner.next());
-        entry.setDeviceModel(scanner.next());
-        entry.setDeviceType(scanner.nextInt());
-        entry.setDeviceConnType(scanner.nextInt());
-        entry.setC14(scanner.nextInt());
-        entry.setC15(scanner.nextInt());
-        entry.setC16(scanner.nextInt());
-        entry.setC17(scanner.nextInt());
-        entry.setC18(scanner.nextInt());
-        entry.setC19(scanner.nextInt());
-        entry.setC20(scanner.nextInt());
-        entry.setC21(scanner.nextInt());
+        try {
+            entry.setImpressionId(scanner.next());
+            entry.setClicked(scanner.nextInt());
+            entry.setHour(scanner.nextInt());
+            entry.setC1(scanner.nextInt());
+            entry.setBannerPos(scanner.nextInt());
+            entry.setSiteId(scanner.next());
+            entry.setSiteDomain(scanner.next());
+            entry.setSiteCategory(scanner.next());
+            entry.setAppId(scanner.next());
+            entry.setAppDomain(scanner.next());
+            entry.setAppCategory(scanner.next());
+            entry.setDeviceId(scanner.next());
+            entry.setDeviceIp(scanner.next());
+            entry.setDeviceModel(scanner.next());
+            entry.setDeviceType(scanner.nextInt());
+            entry.setDeviceConnType(scanner.nextInt());
+            entry.setC14(scanner.nextInt());
+            entry.setC15(scanner.nextInt());
+            entry.setC16(scanner.nextInt());
+            entry.setC17(scanner.nextInt());
+            entry.setC18(scanner.nextInt());
+            entry.setC19(scanner.nextInt());
+            entry.setC20(scanner.nextInt());
+            entry.setC21(scanner.nextInt());
+        } catch (InputMismatchException e) {
+            System.out.println("Error in data file");
+            System.out.println("line:" + line);
+            System.out.println("token:" + scanner.next());
+            e.printStackTrace();
+        }
         return entry;
     }
 
