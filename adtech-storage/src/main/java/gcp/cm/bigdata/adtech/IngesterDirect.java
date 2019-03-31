@@ -2,7 +2,13 @@ package gcp.cm.bigdata.adtech;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.ObjectifyService;
 import gcp.cm.bigdata.adtech.domain.Impression;
+
+import java.io.Closeable;
+import java.io.IOException;
+
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class IngesterDirect implements Ingester {
@@ -34,7 +40,12 @@ public class IngesterDirect implements Ingester {
                 BigtableHelper.insertNewImpression(entry);
                 break;
             case CLOUD_DATASTORE:
-                ofy().save().entity(entry);
+                try (Closeable c = ObjectifyService.begin()) {
+                    ofy().save().entity(entry);
+                } catch (IOException e) {
+                    System.out.println("Data store error");
+                    e.printStackTrace();
+                }
                 break;
         }
     }
