@@ -1,5 +1,6 @@
 package gcp.cm.bigdata.adtech;
 
+import com.googlecode.objectify.ObjectifyService;
 import gcp.cm.bigdata.adtech.domain.Impression;
 
 import java.io.*;
@@ -76,7 +77,9 @@ public class IngesterMain {
         scanner.useDelimiter(",");
         try {
             entry.setImpressionId(scanner.next());
-            entry.setClicked(scanner.nextInt());
+//            entry.setClicked(scanner.nextInt());
+            // This is needed for test file, it does not have click data
+            entry.setClicked(random.nextBoolean() ? 1 : 0);
             entry.setHour(scanner.nextInt());
             entry.setC1(scanner.nextInt());
             entry.setBannerPos(scanner.nextInt());
@@ -125,6 +128,8 @@ public class IngesterMain {
         Properties props = new Properties();
         props.load(HttpApiMain.class.getResourceAsStream("/gcp.properties"));
         setConfig(props);
+        ObjectifyService.init();
+        ObjectifyService.register(Impression.class);
         Ingester ingester = mode.getIngester();
         ingester.setTarget(target);
         style.getFunction().accept(ingester);
