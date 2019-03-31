@@ -79,7 +79,7 @@ public class IngesterMain {
             entry.setImpressionId(scanner.next());
 //            entry.setClicked(scanner.nextInt());
             // This is needed for test file, it does not have click data
-            entry.setClicked(random.nextBoolean() ? 1 : 0);
+            entry.setClicked(random.nextInt(150) <= 10 ? 1 : 0);
             entry.setHour(scanner.nextInt());
             entry.setC1(scanner.nextInt());
             entry.setBannerPos(scanner.nextInt());
