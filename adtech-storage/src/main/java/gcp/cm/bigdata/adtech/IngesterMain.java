@@ -14,11 +14,17 @@ public class IngesterMain {
     static String projectId;
     static String baseUrl;
     static String fileToRead;
+    static TargetDataStore target;
+    static IngesterMode mode;
+    static IngesterStyle style;
 
     public static void setConfig(Properties configProps) {
         projectId = configProps.getProperty("gcp.project-id");
         baseUrl = "https://" + projectId + ".appspot.com/%s/impression";
         fileToRead = configProps.getProperty("ingest.filename");
+        target = TargetDataStore.valueOf(configProps.getProperty("ingest.target"));
+        mode = IngesterMode.valueOf(configProps.getProperty("ingest.mode"));
+        style = IngesterStyle.valueOf(configProps.getProperty("ingest.style"));
     }
 
     public static void sendOne(Ingester ingester) {
@@ -114,9 +120,7 @@ public class IngesterMain {
     public static void main(String[] args) throws IOException {
         Properties props = new Properties();
         props.load(HttpApiMain.class.getResourceAsStream("/gcp.properties"));
-        TargetDataStore target = TargetDataStore.valueOf(props.getProperty("ingest.target"));
-        IngesterMode mode = IngesterMode.valueOf(props.getProperty("ingest.mode"));
-        IngesterStyle style = IngesterStyle.valueOf(props.getProperty("ingest.style"));
+        setConfig(props);
         Ingester ingester = mode.getIngester();
         ingester.setTarget(target);
         style.getFunction().accept(ingester);
