@@ -57,7 +57,7 @@ public class IngesterMain {
     }
 
     public static void sendFromFileToDataStore(Ingester ingester) {
-        String line;
+        String line = null;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileToRead));
             reader.readLine(); // skip CSV headers
@@ -67,6 +67,7 @@ public class IngesterMain {
             }
         } catch (InputMismatchException e) {
             System.out.println("Error in data file");
+            System.out.println("line:" + line);
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
