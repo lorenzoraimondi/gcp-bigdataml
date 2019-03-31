@@ -45,7 +45,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>gcp.properties</file>
+                                <file>src/main/resources/gcp.properties</file>
                             </files>
                         </configuration>
                     </execution>

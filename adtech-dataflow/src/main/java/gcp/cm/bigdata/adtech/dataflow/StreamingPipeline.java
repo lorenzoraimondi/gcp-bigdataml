@@ -23,13 +23,21 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 import org.joda.time.Duration;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.Properties;
+
 public class StreamingPipeline {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        Properties props = new Properties();
+        props.load(StreamingPipeline.class.getResourceAsStream("/gcp.properties"));
+        String project = props.getProperty("gcp.project-id");
+        String bucketDest = props.getProperty("streaming.write.folder");
+
         DataflowPipelineOptions options = PipelineOptionsFactory.as(DataflowPipelineOptions.class);
-        options.setProject(args[0]);
-        options.setStagingLocation(args[1]);
-        options.setTempLocation(args[2]);
+        options.setProject(project);
+        options.setStagingLocation(props.getProperty("gcp.dataflow.staging"));
+        options.setTempLocation(props.getProperty("gcp.dataflow.temp"));
         options.setRunner(DataflowRunner.class);
         options.setStreaming(true);
 
@@ -38,7 +46,7 @@ public class StreamingPipeline {
         cr.registerCoderForClass(JSONObject.class, new JSONObjectCoder());
         PCollection<JSONObject> coll = p
                 .apply("ReadFromPubsub",
-                        PubsubIO.readMessagesWithAttributes().fromTopic("projects/" + args[0] + "/topics/" + args[3]))
+                        PubsubIO.readMessagesWithAttributes().fromTopic("projects/" + project + "/topics/" + props.getProperty("gcp.pubsub.topic")))
                 .apply("ToJSON", MapElements
                         .into(TypeDescriptor.of(JSONObject.class))
                         .via((PubsubMessage msg) -> new JSONObject(new String(msg.getPayload())))
@@ -61,8 +69,8 @@ public class StreamingPipeline {
                 .apply(TextIO.write()
                         .withWindowedWrites()
                         .withNumShards(1)
-                        .withTempDirectory(FileSystems.matchNewResource(args[4], false))
-                        .to(DefaultFilenamePolicy.fromStandardParameters(ValueProvider.StaticValueProvider.of(FileSystems.matchNewResource(args[4] + "site", false)), DefaultFilenamePolicy.DEFAULT_WINDOWED_SHARD_TEMPLATE, ".csv", true)))
+                        .withTempDirectory(FileSystems.matchNewResource(bucketDest, true))
+                        .to(DefaultFilenamePolicy.fromStandardParameters(ValueProvider.StaticValueProvider.of(FileSystems.matchNewResource(bucketDest + "site", false)), DefaultFilenamePolicy.DEFAULT_WINDOWED_SHARD_TEMPLATE, ".csv", true)))
         ;
 
         coll.apply("DeviceAndClicks", MapElements
@@ -79,8 +87,8 @@ public class StreamingPipeline {
                 .apply(TextIO.write()
                         .withWindowedWrites()
                         .withNumShards(1)
-                        .withTempDirectory(FileSystems.matchNewResource(args[4], false))
-                        .to(DefaultFilenamePolicy.fromStandardParameters(ValueProvider.StaticValueProvider.of(FileSystems.matchNewResource(args[4] + "device", false)), DefaultFilenamePolicy.DEFAULT_WINDOWED_SHARD_TEMPLATE, ".csv", true)))
+                        .withTempDirectory(FileSystems.matchNewResource(bucketDest, true))
+                        .to(DefaultFilenamePolicy.fromStandardParameters(ValueProvider.StaticValueProvider.of(FileSystems.matchNewResource(bucketDest + "device", false)), DefaultFilenamePolicy.DEFAULT_WINDOWED_SHARD_TEMPLATE, ".csv", true)))
         ;
 
         p.run().waitUntilFinish();
