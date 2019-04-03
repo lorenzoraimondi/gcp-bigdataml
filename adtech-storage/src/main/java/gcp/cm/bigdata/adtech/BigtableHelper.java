@@ -44,7 +44,7 @@ public class BigtableHelper {
         Table table = null;
         try {
             table = BigtableHelper.getConnection().getTable(TableName.valueOf("impressions"));
-            Put p = new Put(Bytes.toBytes(String.format("%d#%d#%d#%d", entry.getSiteCategory(), entry.getAppCategory(), entry.getDeviceType(), entry.getHour())));
+            Put p = new Put(Bytes.toBytes(String.format("%s#%s#%d#%d", entry.getSiteCategory(), entry.getAppCategory(), entry.getDeviceType(), entry.getHour())));
             p.addColumn(CF1, Bytes.toBytes("ID"), Bytes.toBytes(entry.getImpressionId()));
             p.addColumn(CF1, Bytes.toBytes("CLICK"), Bytes.toBytes(entry.getClicked()));
             p.addColumn(CF1, Bytes.toBytes("HOUR"), Bytes.toBytes(entry.getHour()));
