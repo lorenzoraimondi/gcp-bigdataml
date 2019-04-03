@@ -1,8 +1,18 @@
 package gcp.cm.bigdata.adtech.spark
 
+import java.util.Properties
+
 import org.apache.spark.{SparkConf, SparkContext}
 
 object AdtechClean extends App {
+
+  val props = new Properties
+//  props.load(AdtechClean.getClass.getResourceAsStream("/gcp.properties"))
+  props.load(getClass.getResourceAsStream("/gcp.properties"))
+
+  val bucketName = props.getProperty("gcp.bucket")
+  val inFile = props.getProperty("spark.in-file")
+  val outFile = props.getProperty("spark.out-file")
 
   val conf = new SparkConf()
   conf.setMaster("local")
@@ -10,7 +20,7 @@ object AdtechClean extends App {
   val sc = new SparkContext(conf)
 
   // Si può usare GS come file system distribuito nativo al posto di HDFS
-  val impressions = sc.textFile("gs://abucket-for-codemotion/adtech/test.csv")
+  val impressions = sc.textFile(s"gs://$bucketName/$inFile")
 
   val csv = impressions.map(line => line.split(","))
 
@@ -20,7 +30,7 @@ object AdtechClean extends App {
   val textfile = cleaned.map(rec => rec.mkString(","))
 
   // Si può usare GS come file system distribuito nativo al posto di HDFS
-  textfile.saveAsTextFile("gs://abucket-for-codemotion/adtech/test_cleaned.csv")
-//  textfile.coalesce(1, shuffle = true).saveAsTextFile("gs://abucket-for-codemotion/adtech/test_cleaned.csv")
+  textfile.saveAsTextFile(s"gs://$bucketName/$outFile")
+//  textfile.coalesce(1, shuffle = true).saveAsTextFile(s"gs://$bucketName/$outFile")
 
 }
