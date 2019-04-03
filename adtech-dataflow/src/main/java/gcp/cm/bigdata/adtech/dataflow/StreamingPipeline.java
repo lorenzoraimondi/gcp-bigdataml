@@ -4,7 +4,7 @@ import org.apache.beam.runners.dataflow.DataflowRunner;
 import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.CoderRegistry;
-import org.apache.beam.sdk.io.DefaultFilenamePolicy;
+import org.apache.beam.sdk.io.*;
 import org.apache.beam.sdk.io.FileSystems;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
@@ -32,12 +32,13 @@ public class StreamingPipeline {
         Properties props = new Properties();
         props.load(StreamingPipeline.class.getResourceAsStream("/gcp.properties"));
         String project = props.getProperty("gcp.project-id");
-        String bucketDest = props.getProperty("streaming.write.folder");
+        String bucket = props.getProperty("gcp.bucket");
+        String bucketDest = String.format("gs://%s/%s", bucket, props.getProperty("streaming.write.folder"));
 
         DataflowPipelineOptions options = PipelineOptionsFactory.as(DataflowPipelineOptions.class);
         options.setProject(project);
-        options.setStagingLocation(props.getProperty("gcp.dataflow.staging"));
-        options.setTempLocation(props.getProperty("gcp.dataflow.temp"));
+        options.setStagingLocation(String.format("gs://%s/%s", bucket, props.getProperty("gcp.dataflow.staging")));
+        options.setTempLocation(String.format("gs://%s/%s", bucket, props.getProperty("gcp.dataflow.temp")));
         options.setRunner(DataflowRunner.class);
         options.setStreaming(true);
 
@@ -46,7 +47,9 @@ public class StreamingPipeline {
         cr.registerCoderForClass(JSONObject.class, new JSONObjectCoder());
         PCollection<JSONObject> coll = p
                 .apply("ReadFromPubsub",
-                        PubsubIO.readMessagesWithAttributes().fromTopic("projects/" + project + "/topics/" + props.getProperty("gcp.pubsub.topic")))
+                        PubsubIO.readMessagesWithAttributes().fromTopic("projects/" + project + "/topics/" + props.getProperty("gcp.pubsub.topic"))
+//                        PubsubIO.readMessagesWithAttributes().fromSubscription("projects/" + project + "/subscriptions/" + props.getProperty("gcp.pubsub.subscription"))
+                )
                 .apply("ToJSON", MapElements
                         .into(TypeDescriptor.of(JSONObject.class))
                         .via((PubsubMessage msg) -> new JSONObject(new String(msg.getPayload())))

@@ -14,18 +14,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class CleaningPipeline {
+public class BatchPipeline {
     public static void main(String[] args) throws IOException {
         Properties props = new Properties();
         props.load(StreamingPipeline.class.getResourceAsStream("/gcp.properties"));
         String project = props.getProperty("gcp.project-id");
-        String bucketSrc = props.getProperty("streaming.read.file");
-        String bucketDest = props.getProperty("streaming.write.folder");
+        String bucket = props.getProperty("gcp.bucket");
+        String bucketSrc = String.format("gs://%s/%s", bucket, props.getProperty("streaming.read.file"));
+        String bucketDest = String.format("gs://%s/%s", bucket, props.getProperty("streaming.write.folder"));
 
         DataflowPipelineOptions options = PipelineOptionsFactory.as(DataflowPipelineOptions.class);
         options.setProject(project);
-        options.setStagingLocation(props.getProperty("gcp.dataflow.staging"));
-        options.setTempLocation(props.getProperty("gcp.dataflow.temp"));
+        options.setStagingLocation(String.format("gs://%s/%s", bucket, props.getProperty("gcp.dataflow.staging")));
+        options.setTempLocation(String.format("gs://%s/%s", bucket, props.getProperty("gcp.dataflow.temp")));
         options.setRunner(DataflowRunner.class);
         options.setStreaming(false);
 
@@ -53,6 +54,7 @@ public class CleaningPipeline {
                         TextIO.write().withoutSharding().to(bucketDest + "output-df.csv")
                 )
         ;
+
         p.run().waitUntilFinish();
     }
 }
