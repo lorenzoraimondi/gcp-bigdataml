@@ -128,6 +128,7 @@ public class IngesterMain {
         Properties props = new Properties();
         props.load(HttpApiMain.class.getResourceAsStream("/gcp.properties"));
         setConfig(props);
+        PubsubHelper.setConfig(props);
         ObjectifyService.init();
         ObjectifyService.register(Impression.class);
         Ingester ingester = mode.getIngester();
