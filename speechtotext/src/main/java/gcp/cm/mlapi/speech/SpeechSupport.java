@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 public class SpeechSupport implements AutoCloseable {
     private RecognitionConfig config;
-    SpeechClient speechClient;
+    private SpeechClient speechClient;
 
     public SpeechSupport(RecognitionConfig config) {
         this.config = config;
@@ -31,7 +31,7 @@ public class SpeechSupport implements AutoCloseable {
             }
             System.out.println("|");
             LongRunningRecognizeResponse response = operation.get();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             for (SpeechRecognitionResult result : response.getResultsList()) {
                 buffer.append(result.getAlternatives(0).getTranscript().trim());
                 buffer.append("\n");
