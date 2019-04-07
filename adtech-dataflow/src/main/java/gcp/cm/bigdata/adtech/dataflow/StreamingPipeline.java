@@ -85,7 +85,7 @@ public class StreamingPipeline {
                 )
                 .apply("MakeDeviceStrings", MapElements
                         .into(TypeDescriptors.strings())
-                        .via((KV<String, Integer> kv) -> String.format("Site %s => %s", kv.getKey(), kv.getValue()))
+                        .via((KV<String, Integer> kv) -> String.format("Device %s => %s", kv.getKey(), kv.getValue()))
                 )
                 .apply(TextIO.write()
                         .withWindowedWrites()
