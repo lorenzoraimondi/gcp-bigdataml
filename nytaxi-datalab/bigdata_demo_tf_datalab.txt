@@ -1,0 +1,154 @@
+---TEXT 1
+Per preparare i dati all'addestramento del modello, per prima cosa li mischiamo.
+
+---CODE 2
+# mischiamo gli elementi del data frame a caso
+# NB frac=1 significa che li teniamo tutti
+shuffled = data2.sample(frac=1)
+# ora mostra i primi cinqui dati mischiati
+shuffled[:5]
+
+---TEXT 3
+Poi mettiamo da parte i dati che non ci servono (il giorno dell'anno in questo caso, visto che non è rilevante per stabilire il numero di viaggi in taxi) e il target delle nostre predizioni.
+
+---CODE 4
+# prendiamo solo le colonne dalla terza alla quinta,
+# escludendo quindi la prima, la seconda e l'ultima
+predictors = shuffled.iloc[:,1:5]
+# one-hot encoding del giorno della settimana
+# NB ci bastano sei campi: il settimo giorno è
+# codificato come tutti zero nei sei campi
+# predictors = shuffled.iloc[:,2:5]
+# for day in range(1,7):
+#   matching = shuffled['dayofweek'] == day
+#   key = 'day_' + str(day)
+#   predictors[key] = pd.Series(matching, index=predictors.index, dtype=float)
+# mostra i primi cinque dati per le predizioni di test
+predictors[:5]
+
+---TEXT 5
+In un'altra variabile mettiamo invece il valore dei viaggi in taxi effettuati. Questo è il risultato che cerchiamo di ottenere con il modello. 
+
+---CODE 6
+# I valori che ci aspettiamo come risultato
+targets = shuffled.iloc[:,5]
+# Mostra i primi 5 target
+targets[:5]
+
+---TEXT 7
+<h2> TensorFlow </h2>
+
+Importiamo TensorFlow e configuriamo alcune variabili che useremo nell'addestramento dei modelli e per la predizione.
+
+---CODE 8
+# importa la libreria di TensorFlow
+import tensorflow as tf
+
+# la scala del valore da predire
+# NB è meglio tenere il lavoro da predire più vicino possibile
+# al range 0.0-1.0, per cui diamo la scala dei valori per
+# poter dividere i valori che ci attendiamo
+SCALE_NUM_TRIPS = 600000.0
+
+# il numero totale di dati per l'addestramento
+# NB in questo semplice esempio non faremo del testing
+trainsize = len(targets)
+
+# il numero di feature in input
+npredictors = len(predictors.columns)
+
+# il numero di variabili che il modello predice
+noutputs = 1
+
+# impostiamo il livello di logging
+# NB mettete INFO per ricevere output ogni 100 step
+tf.logging.set_verbosity(tf.logging.WARN)
+
+---TEXT 9
+<h2> Regressione lineare </h2>
+
+Utilizziamo un modello di regressione lineare per predire il numero di viaggi in taxi
+
+---CODE 10
+# eliminiamo l'intera directory dell'eventuale modello precedente
+shutil.rmtree('./trained_model_linear', ignore_errors=True)
+
+# crea lo stimatore, usato per addestrare e fare predizioni
+estimator = tf.contrib.learn.LinearRegressor(
+  model_dir='./trained_model_linear',
+  feature_columns=tf.contrib.learn.infer_real_valued_columns_from_input(predictors.values)
+)
+
+# addestra il modello
+print("Starting to train ... this will take a while ... use verbosity=INFO to get more verbose output")
+def input_fn(features, targets):
+  return tf.constant(features.values), tf.constant(targets.values.reshape(len(targets), noutputs) / SCALE_NUM_TRIPS)
+estimator.fit(input_fn=lambda: input_fn(predictors[:trainsize], targets[:trainsize]), steps=10000)
+
+---TEXT 11
+<h2> Rete neurale </h2>
+
+Utilizziamo una rete neurale per predire il numero di viaggi in taxi
+
+---CODE 12
+# eliminiamo l'intera directory dell'eventuale modello precedente
+shutil.rmtree('./trained_model', ignore_errors=True)
+
+# crea lo stimatore, usato per addestrare e fare predizioni
+estimator = tf.contrib.learn.DNNRegressor(
+  model_dir='./trained_model',
+  hidden_units=[5, 5],                             
+  feature_columns=tf.contrib.learn.infer_real_valued_columns_from_input(predictors.values)
+)
+
+# addestra il modello
+print("starting to train ... this will take a while ... use verbosity=INFO to get more verbose output")
+def input_fn(features, targets):
+  return tf.constant(features.values), tf.constant(targets.values.reshape(len(targets), noutputs))
+estimator.fit(input_fn=lambda: input_fn(predictors[:trainsize], targets[:trainsize]), steps=10000)
+
+---TEXT 13
+<h2> Fare predizioni </h2>
+
+Ora possiamo usare i modelli per fare delle predizioni
+
+---CODE 14
+# feature in input per calcolare la predizione
+input = pd.DataFrame.from_dict(data = 
+                               {
+                                'dayofweek': [1, 3, 6],
+                                'mintemp' : [60, 40, 50],
+                                'maxtemp' : [70, 90, 60],
+                                'rain' : [0, 0.5, 0]
+                               }
+                              )
+# input = pd.DataFrame.from_dict(data = 
+#                                {
+#                                 'mintemp' : [60, 40, 50],
+#                                 'maxtemp' : [70, 90, 60],
+#                                 'rain' : [0, 0.5, 0],
+#                                 'day_1' : [1, 0, 0],
+#                                 'day_2' : [0, 0, 0],
+#                                 'day_3' : [0, 1, 0],
+#                                 'day_4' : [0, 0, 0],
+#                                 'day_5' : [0, 0, 0],
+#                                 'day_6' : [0, 0, 1]
+#                                }
+#                               )
+
+# apri i modello dalla cartella dove sono stati creati
+estimator1 = tf.contrib.learn.DNNRegressor(
+  model_dir='./trained_model',
+  hidden_units=[5, 5],
+  feature_columns=tf.contrib.learn.infer_real_valued_columns_from_input(input.values)
+)
+estimator2 = tf.contrib.learn.LinearRegressor(
+  model_dir='./trained_model_linear',
+  feature_columns=tf.contrib.learn.infer_real_valued_columns_from_input(input.values)
+)
+
+# passa le feature e ottieni le predizioni
+pred1 = np.multiply(list(estimator1.predict(input.values)), 1.0 )
+pred2 = np.multiply(list(estimator2.predict(input.values)), SCALE_NUM_TRIPS )
+print("DNN=", pred1)
+print("Linear=", pred2)
